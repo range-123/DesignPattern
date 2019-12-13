@@ -1,0 +1,56 @@
+1.单例特性
+   1.有自己的私有构造方法 2.有私有属性（不是所有单例形式都有私有属性 如：枚举 ） 3.提供一个全局的访问点 如：public下  Singleton.getInstance();
+
+
+2.破坏单例方法
+   1.序列化与反序列化破坏  2.构造反射进行破坏   枚举类单例不会被破坏原因：反射生成实例时，源码会判断是否为枚举类 是，则不能够被反射
+
+
+3.解决单例被破坏的方法
+   1.抛出一个异常 即：在私有构造方法中加入 throw new RuntimeExecption()
+   2.在一般单例类中加入 方法 ：private Object readResolve(){return singleton;} 注意：必须是Object 作为返回类型
+
+
+4.线程安全的单例
+   1.饿汉模式
+   2.懒汉模式 -加synchronize
+   3.双重校验
+   4.静态类
+   5.枚举
+   6.容器缓存
+
+
+5.线程不安全的单例
+  1.懒汉模式- 不加synchronize
+
+
+6.其他方法--threadLocal
+   1.threadLocal   将线程级别的变量存入ThreadLocalMap 中
+     key:new ThredLocal() 即：ThreadLocal 生成的实例
+     value:设置实例的变量值 即：ThreadLocal set方法的值 可以通过重写initialValue() 方法进行设置value值
+   理解：threadLocal 单线程下 属于线程安全
+   thredLocal:表示数据隔离，单线程下共享线程内部map中设置进行去参数，即：线程级别的变量值
+   synchronize:锁机制 多线程下的数据共享
+
+
+7.推荐使用
+   1.双重校验 2 枚举 3 静态内部类
+
+
+8.扩展
+  1.最多只生成3个实例Triple，通过输入的id 进行判端具体需要生成哪个实例
+
+代码中涉及内容：
+ 1.各个单例形式及单例下的扩展示例
+ 2.序列化与反序列化
+ 3.构造反射
+ 4.发令枪
+ 5.多线程下进行单例校验
+ 6.ThredLocal --已经画出相应的结构 地址：processOn中
+ 7.容器缓存 思路：根据map 进行判断是否在concurrentHashmap 中，key:单例类的包+类名 value:生成的实例  注意：需要加锁
+
+
+特殊说明：关于双重检测锁 中的validate  解释:在jvm生成示例时，存在指令重排序情况，一般情况下（生成对象） 1，分配内存 2.初始化变量 3.将对象的内存地址赋给引用。 加入validate 保证执行的顺序不变。
+                                     补充说明：类的加载：装载（双亲委派->生成class文件（heap）加载class属性信息（method Area）） 连接(验证 准备 （分配内存空间给静态变量）解析（将符号引用转为直接引用）) 初始化
+
+遗留问题：发令枪（CountDownLatch）
