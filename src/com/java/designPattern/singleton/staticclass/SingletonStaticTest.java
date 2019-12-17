@@ -1,5 +1,6 @@
 package com.java.designPattern.singleton.staticclass;
 
+import com.java.designPattern.singleton.utils.ConcurrentExecutor;
 import com.java.designPattern.singleton.utils.ConstructorCheckSingletonUtil;
 import com.java.designPattern.singleton.utils.SerializableCheckSingletonUtil;
 
@@ -16,10 +17,18 @@ public class SingletonStaticTest {
         SingletonStatic singletonStatic = SingletonStatic.getInstance();
         System.out.println(singletonStatic.hashCode() +" 静态内部类");
         //因为线程安全 便不使用多线程与发令枪进行测试了
+        try {
+            ConcurrentExecutor.execute(()->{
+                SingletonStatic singletonStatic1 = SingletonStatic.getInstance();
+                System.out.println(singletonStatic1.hashCode());
+            },10,10);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //破坏静态内部类-单利  序列话、 果然被破坏 改进方式： 加入 private Object readResolve(){ return xx;}
-       SerializableCheckSingletonUtil.serializableCheckSingleton(singletonStatic);
+       //SerializableCheckSingletonUtil.serializableCheckSingleton(singletonStatic);
         //破坏静态内部类-单利  反射破坏 改进方式：在类中抛出异常 如：if(singletonStatic!=null) throw new RuntimeException("静态单利实例只能有一个");
-       /* try {
+        /* try {
             ConstructorCheckSingletonUtil.constructorChekcSingletonUtil("com.java.designPattern.singleton.staticclass.SingletonStatic");
         } catch (IllegalAccessException e) {
             e.printStackTrace();
